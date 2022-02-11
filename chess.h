@@ -45,7 +45,8 @@ public:
     void makeMove(const std::string& move);
     std::vector <std::string> getAllMove();
 
-    //var 
+    //var
+    std::vector <Chess> history;
     std::vector <std::vector<char>> chessBoard;
     bool isWhiteMove;
 
@@ -59,7 +60,6 @@ private:
     // var
     int moveNum;
 
-    std::vector <Chess> history;
     std::string lastMove;
 
     bool blackLeftRookMoved;
