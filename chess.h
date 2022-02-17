@@ -407,12 +407,13 @@ void Chess::undoMove() {
 
 }
 
+
 std::vector <std::string> Chess::getAllMove() {
     std::vector <std::string> someMove = getSomeMove(isWhiteMove);
     std::vector <std::string> someEnemyMove = getSomeMove(!isWhiteMove);
     std::vector <std::string> allMove;
 
-    bool isPointCheck[10] = { };
+    bool isPointCheck[12] = { };
     std::string currentMove;
 
     for (int i = 0; i < someEnemyMove.size(); i++) {
@@ -429,6 +430,9 @@ std::vector <std::string> Chess::getAllMove() {
         if (currentMove[2] == 'f' && currentMove[3] == '8')
             isPointCheck[4] = true;
 
+        if (currentMove[2] == 'e' && currentMove[3] == '8')
+            isPointCheck[10] = true;
+
         if (currentMove[2] == 'b' && currentMove[3] == '1')
             isPointCheck[5] = true;
         if (currentMove[2] == 'c' && currentMove[3] == '1')
@@ -440,18 +444,21 @@ std::vector <std::string> Chess::getAllMove() {
             isPointCheck[8] = true;
         if (currentMove[2] == 'f' && currentMove[3] == '1')
             isPointCheck[9] = true;
+
+        if (currentMove[2] == 'e' && currentMove[3] == '1')
+            isPointCheck[11] = true;
     }
 
     if (!isWhiteMove) {
-        if (!blackKingMoved && !blackLeftRookMoved && chessBoard[0][1] == '.' && chessBoard[0][2] == '.' && chessBoard[0][3] == '.' && !isPointCheck[0] && !isPointCheck[1] && !isPointCheck[2] && chessBoard[0][4] == 'k' && chessBoard[0][0] == 'r')
+        if (!isPointCheck[10] && !blackKingMoved && !blackLeftRookMoved && chessBoard[0][1] == '.' && chessBoard[0][2] == '.' && chessBoard[0][3] == '.' && !isPointCheck[0] && !isPointCheck[1] && !isPointCheck[2] && chessBoard[0][4] == 'k' && chessBoard[0][0] == 'r')
             allMove.push_back("e8c8");
-        if (!blackKingMoved && !blackRightRookMoved && chessBoard[0][6] == '.' && chessBoard[0][5] == '.' && !isPointCheck[3] && !isPointCheck[4] && chessBoard[0][4] == 'k' && chessBoard[0][7] == 'r')
+        if (!isPointCheck[10] && !blackKingMoved && !blackRightRookMoved && chessBoard[0][6] == '.' && chessBoard[0][5] == '.' && !isPointCheck[3] && !isPointCheck[4] && chessBoard[0][4] == 'k' && chessBoard[0][7] == 'r')
             allMove.push_back("e8g8");
     }
     else {
-        if (!whiteKingMoved && !whiteLeftRookMoved && chessBoard[7][1] == '.' && chessBoard[7][2] == '.' && chessBoard[7][3] == '.' && !isPointCheck[5] && !isPointCheck[6] && !isPointCheck[7] && chessBoard[7][4] == 'K' && chessBoard[7][0] == 'R')
+        if (!isPointCheck[11] && !whiteKingMoved && !whiteLeftRookMoved && chessBoard[7][1] == '.' && chessBoard[7][2] == '.' && chessBoard[7][3] == '.' && !isPointCheck[5] && !isPointCheck[6] && !isPointCheck[7] && chessBoard[7][4] == 'K' && chessBoard[7][0] == 'R')
             allMove.push_back("e1c1");
-        if (!whiteKingMoved && !whiteRightRookMoved && chessBoard[7][6] == '.' && chessBoard[7][5] == '.' && !isPointCheck[8] && !isPointCheck[9] && chessBoard[7][4] == 'K' && chessBoard[7][7] == 'R')
+        if (!isPointCheck[11] && !whiteKingMoved && !whiteRightRookMoved && chessBoard[7][6] == '.' && chessBoard[7][5] == '.' && !isPointCheck[8] && !isPointCheck[9] && chessBoard[7][4] == 'K' && chessBoard[7][7] == 'R')
             allMove.push_back("e1g1");
     }
 
