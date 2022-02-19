@@ -32,8 +32,6 @@ public:
         whiteKingMoved = false;
         isCheckAllMove = false;
 
-        moveNum = 0;
-
         history.push_back(*this);
     }
 
@@ -58,7 +56,6 @@ private:
     bool checkCheck();
 
     // var
-    int moveNum;
 
     std::string lastMove;
 
@@ -177,12 +174,6 @@ bool Chess::checkMove(const std::string& move, const bool& isWhiteMove) {
             return true;
         else if (chessBoard['8' - move[3]][move[2] - 'a'] != '.' && abs((move[0] - 96) - ((move[2] - 96))) == 1 && (isWhiteMove == 1 && (move[1] - '0') - ((move[3] - '0')) == -1 || isWhiteMove == 0 && (move[1] - '0') - ((move[3] - '0')) == 1))
             return true;
-        if (moveNum > 0) {
-            if (chessBoard[8 - (lastMove[3] - '0')][lastMove[2] - 'a'] == 'p' && (lastMove[3] - '0') - (lastMove[1] - '0') == -2 && abs((move[0] - 96) - (lastMove[2] - 96)) == 1 && (move[1] - '0') == lastMove[3] - '0' && (move[2] - 96) == lastMove[2] - 96 && (move[3] - '0') == lastMove[1] - '0' - 1)
-                return true;
-            else if (chessBoard[8 - (lastMove[3] - '0')][lastMove[2] - 'a'] == 'P' && (lastMove[3] - '0') - (lastMove[1] - '0') == 2 && abs((move[0] - 96) - (lastMove[2] - 96)) == 1 && (move[1] - '0') == lastMove[3] - '0' && (move[2] - 96) == lastMove[2] - 96 && (move[3] - '0') == lastMove[1] - '0' + 1)
-                return true;
-        }
     }
 
     return false;
@@ -399,7 +390,6 @@ void Chess::undoMove() {
     this->chessBoard = old_game.chessBoard;
     this->isWhiteMove = old_game.isWhiteMove;
     this->lastMove = old_game.lastMove;
-    this->moveNum = old_game.moveNum;
     this->whiteKingMoved = old_game.whiteKingMoved;
     this->whiteLeftRookMoved = old_game.whiteLeftRookMoved;
     this->whiteRightRookMoved = old_game.whiteRightRookMoved;
@@ -529,11 +519,6 @@ void Chess::makeMove(const std::string& move) {
         whiteKingMoved = true;
     // check for castling
 
-    if (moveNum > 0) {
-        if ((chessBoard['8' - move[1]][move[0] - 'a'] == 'P' || chessBoard['8' - move[1]][move[0] - 'a'] == 'p') && (abs(move[1] - move[3]) == 1) && (abs(move[0] - move[2]) == 1) && (chessBoard[8 - (lastMove[3] - '0')][(lastMove[2] - 'a')] == 'p' || chessBoard[8 - (lastMove[3] - '0')][(lastMove[2] - 'a')] == 'P') && (abs(lastMove[3] - lastMove[1]) == 2) && abs(move[3] - lastMove[3]) == 1)
-            chessBoard[8 - (lastMove[3] - '0')][(lastMove[2] - 'a')] = '.';
-    }
-
     chessBoard['8' - move[3]][move[2] - 'a'] = chessBoard['8' - move[1]][move[0] - 'a'];
     chessBoard['8' - move[1]][move[0] - 'a'] = '.';
 
@@ -547,5 +532,4 @@ void Chess::makeMove(const std::string& move) {
 
     lastMove = move;
     isWhiteMove = !isWhiteMove;
-    moveNum++;
 }
