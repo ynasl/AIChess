@@ -213,11 +213,10 @@ int main() {
 
         std::vector <std::string> allMove = game.getAllMove();
 
-        if (move % 2 == 0) {
+        if (game.isWhiteMove) {
             std::cin >> str;
             try {
                 game.makeMove(str);
-                move++;
             }
             catch (std::exception& ex) {
 
@@ -226,7 +225,6 @@ int main() {
         else {
             str = botMove(game);
             game.makeMove(str);
-            move++;
         }
 
         system("cls");
