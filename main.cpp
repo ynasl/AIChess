@@ -1,233 +1,146 @@
-#include <iostream>
-#include <string>
-#include <vector>
+#include <SFML/Graphics.hpp>
 #include "chess.h"
-
-float blackKingScore[8][8] = { 0.5,  0.0 , 0.7,  0.0,  0.0,  0.0,  0.7,  0.5,
-                                 0.5,  0.5,  0.0,  0.0,  0.0,  0.0,  0.5,  0.5,
-                                -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-                                -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-                                -1.0, -1.0, -2.0, -2.0, -2.0, -2.0, -1.0, -1.0,
-                                -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-                                -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-                                -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0 };
-
-float whiteKingScore[8][8] = { -1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0,
-                                -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-                                -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-                                -1.0, -1.0, -2.0, -2.0, -2.0, -1.0, -1.0, -1.0,
-                                -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-                                -1.0, -1.0, -1.0, -1.0, -2.0, -1.0, -1.0, -1.0,
-                                 0.5,  0.5,  0.0,  0.0,  0.0,  0.0,  0.5,  0.5,
-                                 0.5,  0.0,  0.7,  0.0,  0.0,  0.0,  0.7,  0.5 };
-
-float blackBishopScore[8][8] = { -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0,
-                                -1.0,  0.5,  0.0,  0.0,  0.0,  0.0,  0.5, -1.0,
-                                -1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0, -1.0,
-                                -1.0,  0.0,  1.0,  1.0,  1.0,  1.0,  0.0, -1.0,
-                                -1.0,  0.5,  0.5,  1.0,  1.0,  0.5,  0.5, -1.0,
-                                -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0,
-                                -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0,
-                                -2.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -2.0 };
-
-float whiteBishopScore[8][8] = { -2.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -2.0,
-                                -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0,
-                                -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0,
-                                -1.0,  0.5,  0.5,  1.0,  1.0,  0.5,  0.5, -1.0,
-                                -1.0,  0.0,  1.0,  1.0,  1.0,  1.0,  0.0, -1.0,
-                                -1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0, -1.0,
-                                -1.0,  0.5,  0.0,  0.0,  0.0,  0.0,  0.5, -1.0,
-                                -2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0 };
-
-float blackKnightScore[8][8] = { -5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0,
-                                -4.0, -2.0,  0.0,  0.5,  0.5,  0.0, -2.0, -4.0,
-                                -3.0,  0.0,  1.5,  1.0,  1.0,  1.5,  0.0, -3.0,
-                                -3.0,  0.5,  1.0,  1.5,  1.5,  1.0,  0.5, -3.0,
-                                -3.0,  0.0,  1.0,  1.5,  1.5,  1.0,  0.0, -3.0,
-                                -3.0,  0.5,  0.5,  1.0,  1.0,  0.5,  0.5, -3.0,
-                                -4.0, -2.0,  0.0,  0.5,  0.5,  0.0, -2.0, -4.0,
-                                -5.0, -4.0, -3.0, -3.0, -3.0, -3.0,  4.0, -5.0 };
-
-float whiteKnightScore[8][8] = { -5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0,
-                                -4.0, -2.0,  0.0,  0.0,  0.0,  0.0, -2.0, -4.0,
-                                -3.0,  0.0,  0.5,  1.0,  1.0,  0.5,  0.5, -3.0,
-                                -3.0,  0.0,  1.0,  1.5,  1.5,  1.0,  0.0, -3.0,
-                                -3.0,  0.0,  1.0,  1.5,  1.5,  1.0,  0.0, -3.0,
-                                -3.0,  0.5,  1.5,  1.0,  1.0,  1.5,  0.5, -3.0,
-                                -4.0, -2.0,  0.0,  0.5,  0.5,  0.0, -2.0, -4.0,
-                                -5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0 };
-
-float QueenScore[8][8] = { -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0,
-                           -1.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0, -1.0,
-                           -1.0,  0.0,  0.5,  0.5,  0.5,  0.5,  0.0, -1.0,
-                           -0.5,  0.0,  0.5,  0.5,  0.5,  0.5,  0.0, -0.5,
-                            0.0,  0.0,  0.5,  0.5,  0.5,  0.5,  0.0, -0.5,
-                           -1.0,  0.5,  0.5,  0.5,  0.5,  0.5,  0.0, -1.0,
-                           -1.0,  0.0,  0.5,  0.0,  0.0,  0.0,  0.0, -1.0,
-                           -2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0 };
-
-float blackRookScore[8][8] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                               -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-0.5,
-                               -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-0.5,
-                               -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-0.5,
-                               -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-0.5,
-                               -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-0.5,
-                                0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5,
-                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-
-float whiteRookScore[8][8] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                                0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5,
-                               -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-0.5,
-                               -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-0.5,
-                               -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-0.5,
-                               -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-0.5,
-                               -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,-0.5,
-                                0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0 };
-
-float blackPawnScore[8][8] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                               0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                               0.5,-0.5,-1.0, 1.0, 0.0,-1.0,-0.5, 0.5,
-                               0.0, 0.0, 0.0, 2.0, 3.0, 0.0, 0.0, 0.0,
-                               0.5, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5, 0.5,
-                               0.5, 0.5, 1.0, 2.0, 2.0, 1.0, 0.5, 0.5,
-                               5.0, 5.0, 6.0, 6.0, 6.0, 6.0, 5.0, 5.0,
-                               9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0 };
-
-float whitePawnScore[8][8] = { 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0,  9.0,
-                              5.0, 5.0, 6.0, 6.0, 6.0, 6.0, 5.0,  5.0,
-                              0.5, 0.5, 1.0, 2.0, 2.0, 1.0, 0.5,  0.5,
-                              0.5, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5,  0.5,
-                              0.0, 0.0, 0.0, 2.0, 3.0, 0.0, 0.0,  0.0,
-                              0.5,-0.5,-1.0, 1.0, 0.0,-1.0,-0.5,  0.5,
-                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  0.0,
-                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,  0.0 };
-
-float rateMove(Chess& game, const int& x_pos, const int& y_pos) {
-	if (game.chessBoard[8 - y_pos][x_pos - 1] == 'p')
-		return 10.0 + blackPawnScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'P')
-		return -10.0 + whitePawnScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'b')
-		return 35.0 + blackBishopScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'B')
-		return -35.0 + whiteBishopScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'n')
-		return 30.0 + blackKnightScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'N')
-		return -30.0 + whiteKnightScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'r')
-		return 50.0 + blackRookScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'R')
-		return -50.0 + whiteRookScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'q')
-		return 70.0 + QueenScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'Q')
-		return -70.0 + QueenScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'k')
-		return 1000.0 + blackKingScore[8 - y_pos][x_pos - 1];
-	else if (game.chessBoard[8 - y_pos][x_pos - 1] == 'K')
-		return -1000.0 + whiteKingScore[8 - y_pos][x_pos - 1];
-}
-
-inline float evaluatingBoard(Chess& game) {
-    float totalScore = 0.0;
-    for (int y_pos = 1; y_pos <= 8; y_pos++) {
-        for (int x_pos = 1; x_pos <= 8; x_pos++) {
-            if (game.chessBoard[8 - y_pos][x_pos - 1] != '.')
-                totalScore = totalScore + rateMove(game, x_pos, y_pos);
-        }
-    }
-    return totalScore;
-}
-
-float minimax(Chess game, int depth, float alpha, float beta, bool isWhiteMove) {
-    std::string move;
-
-    if (depth == 0)
-        return evaluatingBoard(game);
-
-    std::vector <std::string> allMove = game.getAllMove();
-    
-    if (isWhiteMove) {
-        float bestMove = -100000;
-        for (int i = 0; i < allMove.size(); i++) {
-            move = allMove[i];
-            game.makeMove(move);
-            bestMove = fmax(bestMove, minimax(game, depth - 1, alpha, beta, !isWhiteMove));
-            game.undoMove();
-
-            alpha = fmax(alpha, bestMove);
-            if (beta <= alpha) 
-                return bestMove;
-
-        }
-        return bestMove;
-    }
-    else {
-        float bestMove = 100000;
-        for (int i = 0; i < allMove.size(); i++) {
-            move = allMove[i];
-            game.makeMove(move);
-            bestMove = fmin(bestMove, minimax(game, depth - 1, alpha, beta, !isWhiteMove));
-            game.undoMove();
-
-            beta = fmin(beta, bestMove);
-
-            if (beta <= alpha) 
-                return bestMove;
-        }
-        return bestMove;
-    }
-}
-
-std::string botMove(Chess game) {
-	std::vector <std::string> allMove = game.getAllMove();
-	std::string move;
-	std::string bestMove;
-	float bestScore = -100000;
-	float score = 0;
-
-	for (int i = 0; i < allMove.size(); i++) {
-		move = allMove[i];
-		game.makeMove(move);
-        score = minimax(game, 3, -100000, 100000, false);
-		game.undoMove();
-
-		if (score >= bestScore) {
-			bestScore = score;
-			bestMove = move;
-		}
-	}
-    return bestMove;
-}
+#include "ai.h"
 
 int main() {
+	sf::RenderWindow window(sf::VideoMode(800, 800), "Caesar's Chess");
+	
+	sf::Image board_image;
+	board_image.loadFromFile("image\\board.png");
+
+	sf::Texture board_texture;
+	board_texture.loadFromImage(board_image);
+
+	sf::Sprite board_sprite;
+	board_sprite.setTexture(board_texture);
+	board_sprite.setPosition(0, 0);
+
+	sf::Image pieces_image;
+	pieces_image.loadFromFile("image\\pieces.png");
+
+	sf::Texture pieces_texture;
+	pieces_texture.loadFromImage(pieces_image);
+
+	sf::Sprite pieces_sprite;
+	pieces_sprite.setTexture(pieces_texture);
+
+	pieces_sprite.setScale(0.3, 0.3);
 
 	Chess game;
-	std::string str;
-    int move = 0;
 
-	game.printBoard();
+	int move_count = 0;
+	std::string move = "";
 
-	while (!game.checkMate() && !game.checkMate()) {
+	while (window.isOpen()) {
 
-        std::vector <std::string> allMove = game.getAllMove();
+		sf::Vector2i pos = sf::Mouse::getPosition(window);
 
-        if (game.isWhiteMove) {
-            std::cin >> str;
-            try {
-                game.makeMove(str);
-            }
-            catch (std::exception& ex) {
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed)
+				window.close();
+		}
 
-            }
-        }
-        else {
-            str = botMove(game);
-            game.makeMove(str);
-        }
+		window.clear(sf::Color::White);
+		window.draw(board_sprite);
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (game.chessBoard[i][j] == 'P') {
+					pieces_sprite.setTextureRect(sf::IntRect(1702, 27, 182, 237));
+					pieces_sprite.setPosition(20 + j * 100, 20 + i * 100);
+					window.draw(pieces_sprite);
+				}
+				if (game.chessBoard[i][j] == 'p') {
+					pieces_sprite.setTextureRect(sf::IntRect(1702, 360, 182, 237));
+					pieces_sprite.setPosition(20 + j * 100, 20 + i * 100);
+					window.draw(pieces_sprite);
+				}
 
-        system("cls");
-		game.printBoard();
+				if (game.chessBoard[i][j] == 'R') {
+					pieces_sprite.setTextureRect(sf::IntRect(1358, 27, 211, 233));
+					pieces_sprite.setPosition(20 + j * 100, 27 + i * 100);
+					window.draw(pieces_sprite);
+				}
+				if (game.chessBoard[i][j] == 'r') {
+					pieces_sprite.setTextureRect(sf::IntRect(1358, 360, 211, 233));
+					pieces_sprite.setPosition(20 + j * 100, 27 + i * 100);
+					window.draw(pieces_sprite);
+				}
+
+				if (game.chessBoard[i][j] == 'N') {
+					pieces_sprite.setTextureRect(sf::IntRect(1003, 12, 247, 248));
+					pieces_sprite.setPosition(10 + j * 100, 22 + i * 100);
+					window.draw(pieces_sprite);
+				}
+				if (game.chessBoard[i][j] == 'n') {
+					pieces_sprite.setTextureRect(sf::IntRect(1003, 345, 247, 248));
+					pieces_sprite.setPosition(10 + j * 100, 22 + i * 100);
+					window.draw(pieces_sprite);
+				}
+				if (game.chessBoard[i][j] == 'B') {
+					pieces_sprite.setTextureRect(sf::IntRect(669, 1, 256, 258));
+					pieces_sprite.setPosition(10 + j * 100, 20 + i * 100);
+					window.draw(pieces_sprite);
+				}
+				if (game.chessBoard[i][j] == 'b') {
+					pieces_sprite.setTextureRect(sf::IntRect(669, 334, 256, 258));
+					pieces_sprite.setPosition(10 + j * 100, 17 + i * 100);
+					window.draw(pieces_sprite);
+				}
+				if (game.chessBoard[i][j] == 'Q') {
+					pieces_sprite.setTextureRect(sf::IntRect(321, 1, 284, 261));
+					pieces_sprite.setPosition(5 + j * 100, 17 + i * 100);
+					window.draw(pieces_sprite);
+				}
+				if (game.chessBoard[i][j] == 'q') {
+					pieces_sprite.setTextureRect(sf::IntRect(321, 338, 284, 261));
+					pieces_sprite.setPosition(5 + j * 100, 20 + i * 100);
+					window.draw(pieces_sprite);
+				}
+				if (game.chessBoard[i][j] == 'K') {
+					pieces_sprite.setTextureRect(sf::IntRect(1, 4, 261, 258));
+					pieces_sprite.setPosition(10 + j * 100, 20 + i * 100);
+					window.draw(pieces_sprite);
+				}
+				if (game.chessBoard[i][j] == 'k') {
+					pieces_sprite.setTextureRect(sf::IntRect(1, 338, 261, 258));
+					pieces_sprite.setPosition(10 + j * 100, 20 + i * 100);
+					window.draw(pieces_sprite);
+				}
+
+			}
+		}
+		window.display();
+
+		if (move_count % 2 == 0) {
+			if (event.type == sf::Event::MouseButtonPressed) {
+				if (event.key.code == sf::Mouse::Left && move.size() == 0)
+					move = move + char(pos.x / 100 + 97) + char(56 - pos.y / 100);
+				if (event.key.code == sf::Mouse::Right && move.size() == 2)
+					move = move + char(pos.x / 100 + 97) + char(56 - pos.y / 100);
+
+
+				if (move.size() == 4) {
+					try {
+						game.makeMove(move);
+						move_count++;
+						move = "";
+					}
+					catch (std::exception& ex) {
+						move = "";
+					}
+				}
+			}
+		}
+
+		else {
+			move = botMove(game);
+			game.makeMove(move);
+			move_count++;
+			move = "";
+		}
+
 	}
+
+	return 0;
 }
